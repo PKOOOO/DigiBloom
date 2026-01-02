@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Flower } from '@/types/flower';
 import { FLOWER_METADATA } from '@/lib/flower-data';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
@@ -82,6 +83,17 @@ const getFlowerBgColor = (flowerType: string) => {
 export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModalProps) {
   if (!flower) return null;
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // sm breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const flowerMeta = FLOWER_METADATA[flower.flower];
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/flower/${flower.slug}` : '';
   const bgColor = getFlowerBgColor(flower.flower);
@@ -120,7 +132,11 @@ export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModal
           onClick={onClose}
         />
         <SheetPrimitive.Content
-          className={`${bgColor} fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-[350px] sm:w-[450px] border-l overflow-y-auto p-8`}
+          className={`${bgColor} fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 ${
+            isMobile 
+              ? 'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto max-h-[90vh] w-full border-t rounded-t-2xl p-4'
+              : 'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-[350px] sm:w-[450px] border-l p-8'
+          } overflow-y-auto`}
         >
           <SheetPrimitive.Title className="sr-only">
             {flower.title}
@@ -132,10 +148,10 @@ export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModal
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
 
-        <div className="flex flex-col items-center space-y-6 mt-8">
+        <div className={`flex flex-col items-center space-y-4 sm:space-y-6 ${isMobile ? 'mt-2' : 'mt-8'}`}>
           {/* Title */}
           <div className="w-full mb-2">
-            <h2 className="text-2xl font-bold">{flower.title}</h2>
+            <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>{flower.title}</h2>
           </div>
 
           {/* Share Buttons */}
@@ -178,7 +194,7 @@ export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModal
               alt={flowerMeta.name}
               width={200}
               height={200}
-              className="w-50 h-50 object-contain"
+              className={`${isMobile ? 'w-32 h-32' : 'w-50 h-50'} object-contain`}
             />
           </div>
 

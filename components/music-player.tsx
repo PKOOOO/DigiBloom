@@ -28,13 +28,13 @@ export function MusicPlayer() {
   };
 
   return (
-    <div className="absolute top-4 right-4 z-50">
+    <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50">
       <button
         onClick={toggleMusic}
-        className="bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+        className="bg-white/80 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all"
         aria-label={isPlaying ? 'Mute music' : 'Play music'}
       >
-        {isPlaying ? <Volume2 className="w-6 h-6" /> : <VolumeX className="w-6 h-6" />}
+        {isPlaying ? <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" /> : <VolumeX className="w-5 h-5 sm:w-6 sm:h-6" />}
       </button>
 
       <audio

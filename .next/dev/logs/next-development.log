@@ -1,0 +1,126 @@
+[00:00:01.316] Server  LOG      ✓ Ready in 979ms
+[00:00:08.408] Server  LOG      ○ Compiling / ...
+[00:00:10.514] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:13.345] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:13.345] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:24.573] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:00:24.573] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:03:41.327] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:03:41.327] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:06:44.263] Server  LOG      ✓ Compiled in 73ms
+[00:06:48.372] Server  LOG      ✓ Compiled in 208ms
+[00:07:16.874] Server  LOG      ✓ Compiled in 84ms
+[00:07:41.203] Server  LOG      ✓ Compiled in 64ms
+[00:07:50.058] Server  LOG      ✓ Compiled in 88ms
+[00:08:03.833] Server  LOG      ✓ Compiled in 142ms
+[00:08:29.453] Server  LOG      ✓ Compiled in 76ms
+[00:09:58.060] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:58.209] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:09:59.759] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:09:59.759] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:10:40.116] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:10:40.116] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:11:17.255] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:11:17.255] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:11:25.119] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:25.279] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:11:26.341] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:11:26.341] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:11:27.777] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:11:27.777] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:12:25.889] Server  WARN     ⚠ Cross origin request detected from 192.168.0.115 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:12:26.037] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:26.329] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:12:27.884] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:13:43.015] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:13:43.015] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:14:27.043] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:14:27.043] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:19:24.961] Server  LOG      ✓ Compiled in 92ms
+[00:19:38.254] Server  LOG      ✓ Compiled in 110ms
+[00:19:48.703] Server  LOG      ✓ Compiled in 86ms
+[00:19:55.644] Server  LOG      ✓ Compiled in 102ms
+[00:20:06.802] Server  LOG      ✓ Compiled in 123ms
+[00:20:22.408] Server  LOG      ✓ Compiled in 130ms
+[00:20:30.837] Server  LOG      ✓ Compiled in 88ms
+[00:20:51.539] Server  LOG      ✓ Compiled in 118ms
+[00:20:56.342] Server  LOG      ✓ Compiled in 46ms
+[00:21:12.604] Server  LOG      ✓ Compiled in 62ms
+[00:21:15.049] Server  LOG      ✓ Compiled in 59ms
+[00:21:24.728] Server  LOG      ✓ Compiled in 51ms
+[00:21:38.467] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:21:38.507] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:21:41.653] Server  LOG      ✓ Compiled in 100ms
+[00:21:44.164] Server  LOG      ✓ Compiled in 99ms
+[00:22:26.037] Server  LOG      ✓ Compiled in 84ms
+[00:22:36.806] Server  LOG      ✓ Compiled in 44ms
+[00:22:40.611] Server  LOG      ✓ Compiled in 71ms
+[00:22:43.542] Server  LOG      ✓ Compiled in 113ms
+[00:22:49.732] Server  LOG      ✓ Compiled in 146ms
+[00:22:51.496] Server  LOG      ✓ Compiled in 94ms
+[00:26:07.116] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:26:07.279] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:26:07.608] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:26:09.092] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:26:09.274] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:26:09.931] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:27:40.863] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:28:15.794] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:28:55.650] Server  LOG      ✓ Compiled in 146ms
+[00:28:59.496] Server  LOG      ✓ Compiled in 50ms
+[00:29:01.788] Server  LOG      ✓ Compiled in 56ms
+[00:29:12.311] Server  LOG      ✓ Compiled in 49ms
+[00:29:14.802] Server  LOG      ✓ Compiled in 64ms
+[00:29:17.684] Server  LOG      ✓ Compiled in 55ms
+[00:29:29.736] Server  LOG      ✓ Compiled in 115ms
+[00:29:44.241] Server  LOG      ✓ Compiled in 51ms
+[00:30:01.403] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:30:02.301] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:02.563] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:30:04.125] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:30:34.375] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:30:35.375] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:35.521] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:30:37.332] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:33:45.247] Browser ERROR   Internal React error: Expected static flag was missing. Please notify the React team.
+[00:33:45.247] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:33:45.247] Browser WARN    Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+[00:35:14.501] Server  LOG      ✓ Compiled in 51ms
+[00:35:15.378] Server  LOG      ✓ Compiled in 50ms
+[00:35:16.218] Server  LOG      ✓ Compiled in 58ms
+[00:35:24.674] Server  LOG      ✓ Compiled in 59ms
+[00:35:44.070] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:35:44.416] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:35:44.566] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:35:46.093] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:35:46.093] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:35:55.921] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:35:56.696] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:35:57.057] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:35:58.625] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:36:15.091] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:36:15.649] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:36:15.801] Browser WARN    Image with src "/special_flower.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[00:36:16.888] Browser WARN    Image with src "/sunflower.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:36:16.888] Browser WARN    Image with src "/carnation.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.

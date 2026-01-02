@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Flower, FlowerType } from '@/types/flower';
 import { FlowerSelector } from './flower-selector';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -30,6 +30,16 @@ export function PlantingDrawer({
   const [author, setAuthor] = useState('');
   const [selectedFlower, setSelectedFlower] = useState<FlowerType>('yellow-sunflower');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // sm breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +107,10 @@ export function PlantingDrawer({
 
   return (
     <Sheet open={isOpen} onOpenChange={handleClose}>
-      <SheetContent side="right" className="w-[500px] sm:w-[650px] p-8 py-6 bg-yellow-50 overflow-y-auto">
+      <SheetContent 
+        side={isMobile ? "bottom" : "right"}
+        className={`${isMobile ? 'w-full max-h-[90vh] p-4' : 'w-[500px] md:w-[650px] p-8'} py-6 bg-yellow-50 overflow-y-auto`}
+      >
         <SheetHeader>
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">

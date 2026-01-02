@@ -22,6 +22,11 @@ export default function GardenPage() {
   const [offset, setOffset] = useState(0);
   const [scrollSpeed, setScrollSpeed] = useState(0);
   const [preZoomOffset, setPreZoomOffset] = useState(0); // Store offset before zooming
+  
+  // Touch/drag state for mobile
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, offset: 0 });
+  const touchStartRef = useRef<{ x: number; y: number; offset: number } | null>(null);
 
   // Flower state
   const [allFlowers, setAllFlowers] = useState<Flower[]>([]);
@@ -137,7 +142,7 @@ export default function GardenPage() {
   }, [allFlowers, offset, userState, preZoomOffset]);
 
 
-  // Viewport culling
+  // Viewport culling - account for garden container scrolling
   const visibleFlowers = useMemo(() => {
     // Show all flowers when viewing or planting (we'll handle their visibility individually)
     if (userState === 'viewing' || userState === 'planting') {
@@ -146,10 +151,16 @@ export default function GardenPage() {
 
     const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
     const buffer = 300;
+    const flowerHalfWidth = 60; // Half of max flower width (115px / 2 ≈ 60px)
+    const leftPadding = 60; // Container padding
 
     return allFlowers.filter(flower => {
-      const screenX = flower.x + offset;
-      return screenX > -buffer && screenX < viewportWidth + buffer;
+      // Garden scrolls with translateX(-offset), so flowers appear at: flower.x - offset + leftPadding
+      const minX = 60;
+      const adjustedX = Math.max(flower.x, minX);
+      const screenX = adjustedX - offset + leftPadding; // Negative offset because container scrolls left
+      // Account for flower width - ensure the flower is at least partially visible
+      return screenX > -buffer - flowerHalfWidth && screenX < viewportWidth + buffer + flowerHalfWidth;
     });
   }, [offset, allFlowers, userState, selectedFlower]);
 
@@ -188,9 +199,12 @@ export default function GardenPage() {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickY = e.clientY - rect.top;
     const clickX = e.clientX - rect.left;
+    const leftPadding = 60; // Match the padding added to the container
 
     if (clickY >= 0 && clickY <= rect.height) {
-      const absoluteX = clickX - offset;
+      // Calculate absolute position accounting for current scroll offset
+      // Add offset because the garden container is scrolled (transform translateX)
+      const absoluteX = clickX - leftPadding + offset;
       setPlantingPosition({ x: absoluteX, y: clickY });
       setUserState('planting');
     }
@@ -233,6 +247,71 @@ export default function GardenPage() {
   const handleMouseLeave = useCallback(() => {
     setScrollSpeed(0);
   }, []);
+
+  // Touch handlers for mobile panning - scrolls the garden container
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (userState !== 'normal') return;
+    
+    const touch = e.touches[0];
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      offset: offset
+    };
+    setIsDragging(true);
+  }, [userState, offset]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current || userState !== 'normal') return;
+    
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+    
+    // Only prevent default if horizontal movement is greater than vertical (panning, not scrolling)
+    if (Math.abs(deltaX) > deltaY) {
+      e.preventDefault(); // Prevent scrolling when panning horizontally
+    }
+    
+    // Update offset to scroll the garden container
+    // Drag right (positive deltaX) = pull content right = container moves right = offset decreases
+    // Drag left (negative deltaX) = pull content left = container moves left = offset increases
+    const newOffset = touchStartRef.current.offset - deltaX;
+    setOffset(Math.max(0, newOffset)); // Prevent negative scrolling
+  }, [userState]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) {
+      touchStartRef.current = null;
+      setIsDragging(false);
+      return;
+    }
+    
+    // Check if this was a tap (not a drag)
+    const touch = e.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartRef.current.x);
+    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
+    const wasTap = deltaX < 10 && deltaY < 10;
+    
+    // If it was a tap and not on a flower, trigger grass click
+    if (wasTap && userState === 'normal') {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const clickY = touch.clientY - rect.top;
+      const clickX = touch.clientX - rect.left;
+      const leftPadding = 60;
+      
+      if (clickY >= 0 && clickY <= rect.height) {
+        // Calculate absolute position accounting for current scroll offset
+        const absoluteX = clickX - leftPadding + offset; // Add offset because garden is scrolled
+        setPreZoomOffset(offset);
+        setPlantingPosition({ x: absoluteX, y: clickY });
+        setUserState('planting');
+      }
+    }
+    
+    touchStartRef.current = null;
+    setIsDragging(false);
+  }, [userState, offset]);
 
   const handlePlantSuccess = useCallback((flower: Flower) => {
     setAllFlowers(prev => [...prev, flower]);
@@ -318,11 +397,11 @@ export default function GardenPage() {
       </div>
 
       {/* Clouds Layer */}
-      <CloudsAnimation gardenOffset={offset} />
+      <CloudsAnimation gardenOffset={0} />
 
-      {/* Sun */}
+      {/* Sun - Responsive sizing and positioning */}
       <div
-        className="absolute top-8 left-16 z-[5] cursor-pointer"
+        className="absolute top-2 left-2 sm:top-8 sm:left-16 z-[5] cursor-pointer"
         onMouseEnter={handleSunMouseEnter}
         onMouseLeave={handleSunMouseLeave}
         onClick={handleSunClick}
@@ -332,6 +411,7 @@ export default function GardenPage() {
           alt="Sun"
           width={200}
           height={200}
+          className="w-16 h-16 sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px]"
           priority
         />
       </div>
@@ -361,19 +441,28 @@ export default function GardenPage() {
 
       {/* Pannable Garden Container */}
       <div
-        className="absolute bottom-0 w-full h-[65vh]"
-        style={{ overflow: 'visible' }}
+        className="absolute bottom-0 w-full h-[65vh] sm:h-[65vh] overflow-hidden"
+        style={{ touchAction: 'pan-y pan-x' }}
         // onMouseMove={handleMouseMove} // DISABLED: horizontal scrolling
         // onMouseLeave={handleMouseLeave} // DISABLED: horizontal scrolling
       >
         <div
           className="relative h-full cursor-shovel"
+          style={{ 
+            paddingLeft: '60px', 
+            touchAction: 'pan-y pan-x',
+            transform: `translateX(${-offset}px)`,
+            transition: isDragging ? 'none' : 'transform 0.1s ease-out'
+          }} // Scroll the garden container instead of moving flowers
           onClick={handleGrassClick}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
             {/* Dirt Plot Preview */}
             {plantingPosition && userState === 'planting' && (
               <DirtPlot
-                x={plantingPosition.x + preZoomOffset}
+                x={plantingPosition.x + 60} // Add padding to account for container padding
                 y={plantingPosition.y}
                 visible={true}
               />
@@ -399,18 +488,24 @@ export default function GardenPage() {
                     zIndex: 50,
                   };
                 } else if (userState === 'viewing' && isOtherFlowerSelected) {
-                  // Hide other flowers - use preZoomOffset (position when zoom started)
+                  // Hide other flowers - flowers stay in fixed positions
+                  const minX = 60;
+                  const adjustedX = Math.max(flower.x, minX);
                   return {
-                    left: `${flower.x + preZoomOffset}px`,
+                    left: `${adjustedX}px`,
                     top: `${flower.y}px`,
                     opacity: 0,
                     transform: 'scale(0.5)',
                     zIndex: 10,
                   };
                 }
-                // Normal position (including planting mode) - apply scroll offset
+                // Normal position - flowers stay in fixed positions, garden scrolls
+                // Ensure minimum x position to prevent flowers from being cut off
+                const minX = 60; // Minimum x to keep flower fully visible
+                const adjustedX = Math.max(flower.x, minX);
+                
                 return {
-                  left: `${flower.x + offset}px`,
+                  left: `${adjustedX}px`, // Fixed position, no offset - garden scrolls instead
                   top: `${flower.y}px`,
                   transform: 'translate(-50%, -50%)',
                   zIndex: 10,
