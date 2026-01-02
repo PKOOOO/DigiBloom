@@ -43,6 +43,12 @@ export default function GardenPage() {
   const sunHoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const sunBlinkIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isSunHovered, setIsSunHovered] = useState(false);
+  
+  // Sky area detection - top ~33% is sky (not plantable)
+  const getSkyAreaHeight = useCallback(() => {
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+    return viewportHeight * 0.28; // Top 33% is sky
+  }, []);
 
   // Clear scroll when entering viewing or planting states
   useEffect(() => {
@@ -200,15 +206,37 @@ export default function GardenPage() {
     const clickY = e.clientY - rect.top;
     const clickX = e.clientX - rect.left;
     const leftPadding = 60; // Match the padding added to the container
+    const skyHeight = getSkyAreaHeight();
+
+    // Check if click is in sky area (top ~33%) - don't allow planting there
+    if (clickY < skyHeight) {
+      return; // Clicked in sky area, don't plant
+    }
+
+    // Calculate absolute position accounting for current scroll offset
+    const absoluteX = clickX - leftPadding + offset;
+    const absoluteY = clickY;
+
+    // Check if click is too close to existing flowers (restricted area)
+    const minDistance = 100; // Minimum distance from existing flowers in pixels
+    const isTooClose = allFlowers.some(flower => {
+      const minX = 60;
+      const adjustedX = Math.max(flower.x, minX);
+      const distance = Math.sqrt(
+        Math.pow(absoluteX - adjustedX, 2) + Math.pow(absoluteY - flower.y, 2)
+      );
+      return distance < minDistance;
+    });
+
+    if (isTooClose) {
+      return; // Too close to existing flower, don't plant
+    }
 
     if (clickY >= 0 && clickY <= rect.height) {
-      // Calculate absolute position accounting for current scroll offset
-      // Add offset because the garden container is scrolled (transform translateX)
-      const absoluteX = clickX - leftPadding + offset;
-      setPlantingPosition({ x: absoluteX, y: clickY });
+      setPlantingPosition({ x: absoluteX, y: absoluteY });
       setUserState('planting');
     }
-  }, [userState, offset, handleExitViewing]);
+  }, [userState, offset, handleExitViewing, getSkyAreaHeight, allFlowers]);
 
   const handleExitPlanting = useCallback(() => {
     // Restore previous offset when exiting planting
@@ -266,16 +294,15 @@ export default function GardenPage() {
     
     const touch = e.touches[0];
     const deltaX = touch.clientX - touchStartRef.current.x;
-    const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
     
-    // Only prevent default if horizontal movement is greater than vertical (panning, not scrolling)
-    if (Math.abs(deltaX) > deltaY) {
-      e.preventDefault(); // Prevent scrolling when panning horizontally
+    // Prevent default to allow smooth panning (only if horizontal movement)
+    if (Math.abs(deltaX) > 5) {
+      e.preventDefault();
     }
     
-    // Update offset to scroll the garden container
-    // Drag right (positive deltaX) = pull content right = container moves right = offset decreases
-    // Drag left (negative deltaX) = pull content left = container moves left = offset increases
+    // Update horizontal offset - invert direction so drag right scrolls right
+    // Drag right (positive deltaX) = scroll right = decrease offset (container moves right)
+    // Drag left (negative deltaX) = scroll left = increase offset (container moves left)
     const newOffset = touchStartRef.current.offset - deltaX;
     setOffset(Math.max(0, newOffset)); // Prevent negative scrolling
   }, [userState]);
@@ -293,25 +320,56 @@ export default function GardenPage() {
     const deltaY = Math.abs(touch.clientY - touchStartRef.current.y);
     const wasTap = deltaX < 10 && deltaY < 10;
     
+    // Check if tap was on a flower element - if so, don't trigger grass click
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const isFlowerClick = target?.closest('.flower-clickable');
+    
     // If it was a tap and not on a flower, trigger grass click
-    if (wasTap && userState === 'normal') {
+    if (wasTap && userState === 'normal' && !isFlowerClick) {
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       const clickY = touch.clientY - rect.top;
       const clickX = touch.clientX - rect.left;
       const leftPadding = 60;
+      const skyHeight = getSkyAreaHeight();
+      
+      // Check if tap is in sky area - don't allow planting there
+      if (clickY < skyHeight) {
+        touchStartRef.current = null;
+        setIsDragging(false);
+        return;
+      }
+      
+      // Calculate absolute position accounting for current scroll offset
+      const absoluteX = clickX - leftPadding + offset;
+      const absoluteY = clickY;
+
+      // Check if click is too close to existing flowers (restricted area)
+      const minDistance = 100; // Minimum distance from existing flowers in pixels
+      const isTooClose = allFlowers.some(flower => {
+        const minX = 60;
+        const adjustedX = Math.max(flower.x, minX);
+        const distance = Math.sqrt(
+          Math.pow(absoluteX - adjustedX, 2) + Math.pow(absoluteY - flower.y, 2)
+        );
+        return distance < minDistance;
+      });
+
+      if (isTooClose) {
+        touchStartRef.current = null;
+        setIsDragging(false);
+        return; // Too close to existing flower, don't plant
+      }
       
       if (clickY >= 0 && clickY <= rect.height) {
-        // Calculate absolute position accounting for current scroll offset
-        const absoluteX = clickX - leftPadding + offset; // Add offset because garden is scrolled
         setPreZoomOffset(offset);
-        setPlantingPosition({ x: absoluteX, y: clickY });
+        setPlantingPosition({ x: absoluteX, y: absoluteY });
         setUserState('planting');
       }
     }
     
     touchStartRef.current = null;
     setIsDragging(false);
-  }, [userState, offset]);
+  }, [userState, offset, getSkyAreaHeight, allFlowers]);
 
   const handlePlantSuccess = useCallback((flower: Flower) => {
     setAllFlowers(prev => [...prev, flower]);
@@ -385,81 +443,53 @@ export default function GardenPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {/* Fixed Background - hoisted up */}
-      <div className="absolute inset-0 -top-[35px] z-0">
-        <Image
-          src="/background.png"
-          alt="Garden background"
-          fill
-          className="object-cover object-top"
-          priority
-        />
-      </div>
-
-      {/* Clouds Layer */}
-      <CloudsAnimation gardenOffset={0} />
-
-      {/* Sun - Responsive sizing and positioning */}
+      {/* Pannable Garden Container - Full height with background, flowers, sun and clouds */}
       <div
-        className="absolute top-2 left-2 sm:top-8 sm:left-16 z-[5] cursor-pointer"
-        onMouseEnter={handleSunMouseEnter}
-        onMouseLeave={handleSunMouseLeave}
-        onClick={handleSunClick}
-      >
-        <Image
-          src={sunImage}
-          alt="Sun"
-          width={200}
-          height={200}
-          className="w-16 h-16 sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px]"
-          priority
-        />
-      </div>
-
-      {/* Music Player */}
-      <MusicPlayer />
-
-      {/* Error Display */}
-      {error && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50">
-          {error}
-        </div>
-      )}
-
-      {/* Scroll Indicators */}
-      {/* DISABLED: horizontal scrolling indicators */}
-      {/* {userState === 'normal' && (
-        <>
-          <div className="absolute left-4 bottom-[40vh] z-20 pointer-events-none">
-            <ChevronLeft className="w-16 h-16 text-white/90" strokeWidth={2.5} />
-          </div>
-          <div className="absolute right-4 bottom-[40vh] z-20 pointer-events-none">
-            <ChevronRight className="w-16 h-16 text-white/90" strokeWidth={2.5} />
-          </div>
-        </>
-      )} */}
-
-      {/* Pannable Garden Container */}
-      <div
-        className="absolute bottom-0 w-full h-[65vh] sm:h-[65vh] overflow-hidden"
+        className="absolute inset-0 overflow-hidden"
         style={{ touchAction: 'pan-y pan-x' }}
-        // onMouseMove={handleMouseMove} // DISABLED: horizontal scrolling
-        // onMouseLeave={handleMouseLeave} // DISABLED: horizontal scrolling
       >
+        {/* Scrolling Garden Background and Content */}
         <div
-          className="relative h-full cursor-shovel"
+          className="relative h-full"
           style={{ 
-            paddingLeft: '60px', 
-            touchAction: 'pan-y pan-x',
+            paddingLeft: '60px',
+            width: '500%', // Wide enough for horizontal scrolling
+            minWidth: '5000px',
+            touchAction: 'none', // Prevent default touch actions, we handle it manually
             transform: `translateX(${-offset}px)`,
             transition: isDragging ? 'none' : 'transform 0.1s ease-out'
-          }} // Scroll the garden container instead of moving flowers
+          }}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const mouseY = e.clientY - rect.top;
+            const skyHeight = getSkyAreaHeight();
+            // Change cursor based on whether in sky or grass area
+            if (mouseY < skyHeight) {
+              e.currentTarget.style.cursor = 'pointer';
+            } else {
+              e.currentTarget.style.cursor = 'url(/shovel-cursor.png) 16 16, pointer';
+            }
+          }}
           onClick={handleGrassClick}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-            {/* Dirt Plot Preview */}
+          {/* Garden Background Image - scrolls with container, repeats horizontally, fixed vertically to keep sky visible */}
+          <div 
+            className="absolute inset-0 z-0" 
+            style={{ 
+              width: '500%', 
+              minWidth: '5000px',
+              height: '100%', // Match viewport height - sky stays at top
+              backgroundImage: 'url(/background.png)',
+              backgroundRepeat: 'repeat-x', // Only repeat horizontally
+              backgroundPosition: 'top center',
+              backgroundSize: 'auto 100%'
+            }}
+          />
+
+          {/* Dirt Plot Preview */}
             {plantingPosition && userState === 'planting' && (
               <DirtPlot
                 x={plantingPosition.x + 60} // Add padding to account for container padding
@@ -479,13 +509,11 @@ export default function GardenPage() {
 
               // Calculate flower position
               const getFlowerStyle = () => {
+                // Skip selected flower - it's rendered outside the container
                 if (userState === 'viewing' && isThisFlowerSelected) {
-                  // Move to center - adjusted for better positioning
                   return {
-                    left: `${viewportWidth / 2 - 150}px`,
-                    top: `${viewportHeight * 0.15}px`, // Higher on screen
-                    transform: 'translate(-50%, -50%) scale(3)', // Larger scale
-                    zIndex: 50,
+                    opacity: 0,
+                    pointerEvents: 'none' as const,
                   };
                 } else if (userState === 'viewing' && isOtherFlowerSelected) {
                   // Hide other flowers - flowers stay in fixed positions
@@ -521,6 +549,14 @@ export default function GardenPage() {
                   className="absolute group transition-all duration-700 ease-in-out flower-clickable hover:!z-[100]"
                   style={{ ...restStyle, zIndex }}
                   onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleFlowerClick(flower);
+                  }}
+                  onTouchStart={(e) => {
+                    e.stopPropagation(); // Prevent grass click from firing
+                  }}
+                  onTouchEnd={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
                     handleFlowerClick(flower);
@@ -601,6 +637,67 @@ export default function GardenPage() {
             })}
         </div>
       </div>
+
+      {/* Selected Flower - Rendered outside scrolling container when viewing */}
+      {userState === 'viewing' && selectedFlower && (() => {
+        const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+        const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+        const isMobile = viewportWidth < 640;
+        const flower = selectedFlower;
+        
+        return (
+          <div
+            key={flower.id}
+            className="fixed pointer-events-none"
+            style={{
+              left: '50%',
+              top: isMobile ? '20%' : '50%', // Top on mobile, center on desktop
+              transform: `translate(-50%, -50%) scale(${isMobile ? '1' : '3'})`, // Smaller on mobile
+              zIndex: 50,
+            }}
+          >
+            <Image
+              src={FLOWER_METADATA[flower.flower].image}
+              alt={flower.title}
+              width={flower.flower === 'blue-forget-me-not' || flower.flower === 'white-rose' ? 115 : 100}
+              height={flower.flower === 'blue-forget-me-not' || flower.flower === 'white-rose' ? 115 : 100}
+              className="relative z-[1] animate-viewing-flower"
+            />
+          </div>
+        );
+      })()}
+
+      {/* Clouds Layer - Fixed on top of garden background, doesn't scroll */}
+      <div className="fixed inset-0 pointer-events-none z-10">
+        <CloudsAnimation gardenOffset={0} />
+      </div>
+
+      {/* Sun - Fixed on top of garden background, doesn't scroll */}
+      <div
+        className="fixed top-2 left-2 sm:top-8 sm:left-16 z-[15] cursor-pointer"
+        onMouseEnter={handleSunMouseEnter}
+        onMouseLeave={handleSunMouseLeave}
+        onClick={handleSunClick}
+      >
+        <Image
+          src={sunImage}
+          alt="Sun"
+          width={200}
+          height={200}
+          className="w-16 h-16 sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px]"
+          priority
+        />
+      </div>
+
+      {/* Music Player */}
+      <MusicPlayer />
+
+      {/* Error Display */}
+      {error && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50">
+          {error}
+        </div>
+      )}
 
       {/* Drawers & Modals */}
       <PlantingDrawer
