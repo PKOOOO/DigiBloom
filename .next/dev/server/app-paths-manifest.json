@@ -1,6 +1,0 @@
-{
-  "/api/flowers/[slug]/route": "app/api/flowers/[slug]/route.js",
-  "/api/flowers/route": "app/api/flowers/route.js",
-  "/flower/[slug]/page": "app/flower/[slug]/page.js",
-  "/page": "app/page.js"
-}
