@@ -81,8 +81,6 @@ const getFlowerBgColor = (flowerType: string) => {
 };
 
 export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModalProps) {
-  if (!flower) return null;
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -93,6 +91,8 @@ export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModal
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  if (!flower) return null;
 
   const flowerMeta = FLOWER_METADATA[flower.flower];
   const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/flower/${flower.slug}` : '';
@@ -132,107 +132,106 @@ export function FlowerDetailModal({ flower, isOpen, onClose }: FlowerDetailModal
           onClick={onClose}
         />
         <SheetPrimitive.Content
-          className={`${bgColor} fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 ${
-            isMobile 
+          className={`${bgColor} fixed z-50 flex flex-col shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 ${isMobile
               ? 'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto max-h-[90vh] w-full border-t rounded-t-2xl p-4'
               : 'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-[350px] sm:w-[450px] border-l p-8'
-          } overflow-y-auto`}
+            } overflow-y-auto`}
         >
           <SheetPrimitive.Title className="sr-only">
             {flower.title}
           </SheetPrimitive.Title>
           <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none z-10">
             <svg className="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 6 6 18M6 6l12 12"/>
+              <path d="M18 6 6 18M6 6l12 12" />
             </svg>
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
 
-        <div className={`flex flex-col items-center space-y-4 sm:space-y-6 ${isMobile ? 'mt-2' : 'mt-8'}`}>
-          {/* Title */}
-          <div className="w-full mb-2">
-            <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>{flower.title}</h2>
-          </div>
+          <div className={`flex flex-col items-center space-y-4 sm:space-y-6 ${isMobile ? 'mt-2' : 'mt-8'}`}>
+            {/* Title */}
+            <div className="w-full mb-2">
+              <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>{flower.title}</h2>
+            </div>
 
-          {/* Share Buttons */}
-          <div className="w-full">
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleCopyLink}
-                className="h-8 w-8"
-                title="Copy Link"
-              >
-                <Copy className="w-3.5 h-3.5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleShareFacebook}
-                className="h-8 w-8"
-                title="Share on Facebook"
-              >
-                <Facebook className="w-3.5 h-3.5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleShareTwitter}
-                className="h-8 w-8"
-                title="Share on Twitter"
-              >
-                <Twitter className="w-3.5 h-3.5" />
-              </Button>
+            {/* Share Buttons */}
+            <div className="w-full">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleCopyLink}
+                  className="h-8 w-8"
+                  title="Copy Link"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleShareFacebook}
+                  className="h-8 w-8"
+                  title="Share on Facebook"
+                >
+                  <Facebook className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleShareTwitter}
+                  className="h-8 w-8"
+                  title="Share on Twitter"
+                >
+                  <Twitter className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Flower Image */}
+            <div className="flex justify-center">
+              <Image
+                src={flowerMeta.image}
+                alt={flowerMeta.name}
+                width={200}
+                height={200}
+                className={`${isMobile ? 'w-32 h-32' : 'w-50 h-50'} object-contain`}
+              />
+            </div>
+
+            {/* Tags */}
+            <div className="flex gap-2 flex-wrap justify-center">
+              {flowerMeta.tags.map((tag, index) => {
+                const colors = getTagColor(tag, flower.slug, index);
+                return (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 text-sm rounded-full"
+                    style={{
+                      backgroundColor: colors.bg,
+                      color: colors.text
+                    }}
+                  >
+                    {tag}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Flower Description */}
+            <div className="text-center">
+              <p className="text-sm text-gray-700">{flowerMeta.description}</p>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full border-t border-gray-300" />
+
+            {/* Message and Author */}
+            <div className="w-full text-center">
+              <p className="text-lg leading-relaxed mb-3">{flower.message}</p>
+              {flower.author && (
+                <p className="text-sm text-gray-600">— {flower.author}</p>
+              )}
             </div>
           </div>
-
-          {/* Flower Image */}
-          <div className="flex justify-center">
-            <Image
-              src={flowerMeta.image}
-              alt={flowerMeta.name}
-              width={200}
-              height={200}
-              className={`${isMobile ? 'w-32 h-32' : 'w-50 h-50'} object-contain`}
-            />
-          </div>
-
-          {/* Tags */}
-          <div className="flex gap-2 flex-wrap justify-center">
-            {flowerMeta.tags.map((tag, index) => {
-              const colors = getTagColor(tag, flower.slug, index);
-              return (
-                <span
-                  key={tag}
-                  className="px-3 py-1 text-sm rounded-full"
-                  style={{
-                    backgroundColor: colors.bg,
-                    color: colors.text
-                  }}
-                >
-                  {tag}
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Flower Description */}
-          <div className="text-center">
-            <p className="text-sm text-gray-700">{flowerMeta.description}</p>
-          </div>
-
-          {/* Divider */}
-          <div className="w-full border-t border-gray-300" />
-
-          {/* Message and Author */}
-          <div className="w-full text-center">
-            <p className="text-lg leading-relaxed mb-3">{flower.message}</p>
-            {flower.author && (
-              <p className="text-sm text-gray-600">— {flower.author}</p>
-            )}
-          </div>
-        </div>
         </SheetPrimitive.Content>
       </SheetPrimitive.Portal>
     </Sheet>
